@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_magh/pages/home_page.dart';
-import 'package:flutter_magh/routes/route_enums.dart';
+
 import 'package:go_router/go_router.dart';
+import 'package:magh/pages/home_page.dart';
 
 
 

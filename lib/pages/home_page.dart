@@ -1,54 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_magh/pages/widgets/todo_form.dart';
-import 'package:flutter_magh/pages/widgets/todo_list.dart';
-import 'package:flutter_magh/providers/notifier_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:magh/providers/animate.dart';
 
-class HomePage extends StatefulWidget {
+
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-
-  int number = 0;
-
-  @override
-  Widget build(BuildContext context) {
-
-    
-
+  Widget build(BuildContext context, ref) {
+    final state = ref.watch(animateProvider);
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Todo List'),
-        actions: [
-          Consumer(
-            builder: (context, ref, child){
+      appBar: AppBar(),
+      body: Column(
+        children: [
+          AnimatedContainer(
+            height: state.size,
+              width: state.size,
+              color: Colors.red,
+              duration: Duration(milliseconds:  400),
+          ),
 
-              final theme_state = ref.watch(themeProvider);
+          ElevatedButton(onPressed: (){
+            ref.read(animateProvider.notifier).change(size: state.size);
+          },
+              child: Text("Click to Increase")),
 
-              return IconButton(
-              onPressed: (){
-                ref.read(themeProvider.notifier).toggle();
+          ElevatedButton(onPressed: (){
+            ref.read(animateProvider.notifier).change(size: state.size-10);
+          },
+              child: Text("Click to Decrease")),
 
-              }, icon: Icon(
-                theme_state == true ? Icons.light_mode_outlined : Icons.dark_mode_outlined
-              )); 
 
-            },
-          ),   
+          AnimatedOpacity(opacity:  state.opacity,
+              duration: Duration(milliseconds: 400),
+          child: Image.asset('assets/images/peter-herrmann-PSD0PPhxUgE-unsplash.jpg', height: 200)),
+
+          ElevatedButton(onPressed: (){
+            ref.read(animateProvider.notifier).change(opactiy: 0.5);
+          }, child: Text('Click to Opacity')),
+
         ],
       ),
-      body: Scaffold(
-        body: ListView(
-          children: [
-            TodoForm(),
-            TodoList(),
-          ],
-        ),
-      )
     );
   }
 }

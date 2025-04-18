@@ -7,33 +7,9 @@ import 'package:magh/routes/app_routes.dart';
 /// provider , notifier provider, future provider, async notifier provider, stream provider
 
 
-// void m(){
-//   for(int i = 0; i<10000000; i++){
-//
-//   }
-//   print('sello world');
-// }
-
-Future<String> getSome(){
-  return Future.delayed(Duration(seconds: 2), (){
-    print('2 sec gone');
-    return 'hello world';
-  });
-}
-
-
-void a(){
-  print('hello world');
-}
-
-
-
-
 
 void main (){
 
-  getSome();
-  a();
 
 
 runApp(ProviderScope(child: Home()));

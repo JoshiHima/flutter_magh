@@ -8,5 +8,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 @riverpod
 Future<List<Recipe>> getRecipes (Ref ref) async {
+
+
+  ref.keepAlive(); // if i come back to that page the state remains the same, or the data does not change
+
+  ref.onDispose((){ // this is used when we change the page from another, the provider is cleared
+    print('Disposed');
+  });
+
   return RecipeRepository().getRecipes();
 }

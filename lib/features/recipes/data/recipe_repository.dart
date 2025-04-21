@@ -1,11 +1,18 @@
 
 
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:magh/features/recipes/domain/recipe.dart';
+import 'package:magh/features/shared/client_provider.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'recipe_repository.g.dart';
+
 
 class RecipeRepository{
 
- final dio = Dio();
+ final Dio dio; //later we watch the instance from client provider
+ RecipeRepository(this.dio);
 
  Future<List<Recipe>> getRecipes() async{
 
@@ -20,4 +27,9 @@ class RecipeRepository{
    }
  }
 
+}
+
+@riverpod
+RecipeRepository recipeRepository(Ref ref) {
+  return RecipeRepository(ref.watch(clientProvider)); // watching the client provider to get the instance
 }

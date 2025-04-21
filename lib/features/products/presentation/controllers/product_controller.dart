@@ -9,5 +9,11 @@ part 'product_controller.g.dart';
 
 @riverpod
 Future<List<Product>> getProducts (Ref ref) async {
-  return ProductRepository().getProducts();
+  return ref.read(productRepositoryProvider).getProducts(); // to call the function from product repository
+}
+
+// for getting the product details 
+@riverpod
+Future<ProductInfo> getProductDetails(Ref ref) async {
+  return ref.read(productRepositoryProvider).getProductDetail(1);
 }

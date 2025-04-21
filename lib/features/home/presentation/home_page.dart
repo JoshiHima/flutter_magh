@@ -2,12 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:magh/features/products/presentation/product_lists.dart';
+import 'package:magh/features/products/presentation/product_screen.dart';
 import 'package:magh/features/recipes/presentation/recipes.dart';
 
 
 List<Widget> _widgets = [
   ProductLists(),
   Recipes(),
+  ProductScreen(),
 ];
 
 
@@ -30,6 +32,9 @@ class _HomePageState extends State<HomePage> {
 
       body: _widgets[_index],
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.red,
+        unselectedItemColor: Colors.grey,
+        currentIndex: _index, // also pass the current Index to select the color of particular selected index
         onTap: (int index){
           setState(() {
             _index = index; // update the index number when one item of not
@@ -45,6 +50,11 @@ class _HomePageState extends State<HomePage> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.browse_gallery),
               label: 'Recipe'
+            ),
+
+            BottomNavigationBarItem(
+                icon: Icon(Icons.details_rounded),
+                label: 'Product Details'
             ),
           ],
       ),

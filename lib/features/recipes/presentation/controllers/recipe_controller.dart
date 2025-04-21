@@ -16,5 +16,5 @@ Future<List<Recipe>> getRecipes (Ref ref) async {
     print('Disposed');
   });
 
-  return RecipeRepository().getRecipes();
+  return ref.read(recipeRepositoryProvider).getRecipes(); // calling function from the provider like this
 }

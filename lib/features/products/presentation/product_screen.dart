@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:magh/features/products/data/product_repository.dart';
 import 'package:magh/features/products/presentation/controllers/product_controller.dart';
 
 class ProductScreen extends ConsumerWidget {
@@ -8,9 +9,10 @@ class ProductScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final productInfoState = ref.watch(getProductDetailsProvider);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Product Details'),
+        title: const Text('Product Details'),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -18,78 +20,125 @@ class ProductScreen extends ConsumerWidget {
         },
         child: productInfoState.when(
           data: (data) {
-            return ListView(
-              padding: EdgeInsets.all(16),
-              children: [
-                _buildInfoCard('Title', data.title),
-                _buildInfoCard('Description', data.description),
-                _buildInfoCard('Category', data.category),
-                _buildInfoCard('Price', '\$${data.price.toString()}'),
-                _buildInfoCard('Stock', data.stock.toString()),
-                _buildInfoCard('Rating', data.rating.toString()),
-                _buildInfoCard('Discount', '${data.discountPercentage}%'),
-                _buildInfoCard('Tags', data.tags.join(', ')),
-                _buildInfoCard('Brand', data.brand),
-                _buildInfoCard('SKU', data.sku),
-                _buildInfoCard('Dimensions', (data.dimensions).toString()),
-                _buildInfoCard('Weight', '${data.warrantyInformation} kg'),
-                _buildInfoCard('Warranty', data.warrantyInformation),
-                _buildInfoCard('Shipping', data.shippingInformation.toString()),
-                _buildInfoCard('Return Policy', data.returnPolicy),
-                _buildInfoCard('Min Order Quantity', data.minimumOrderQuantity.toString()),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: data.images.length,  // Length of images list
-                  itemBuilder: (context, index) {  // 'index' is available here
-                    return _buildImageCard('Product Image', data.images[index]); // Access the image URL directly
-                  },
-                ),
-                _buildImageCard('Thumbnail', data.thumbnail),
-              ],
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Product Image (only first image)
+                  if (data.images.isNotEmpty)
+                    _buildImageCard('Product Image', data.images.first),
+
+                  // Thumbnail
+                  _buildImageCard('Thumbnail', data.thumbnail),
+
+                  // Info Cards
+                  _buildInfoCard('Title', data.title),
+                  _buildInfoCard('Description', data.description),
+                  _buildInfoCard('Category', data.category),
+                  _buildInfoCard('Price', '\$${data.price}'),
+                  _buildInfoCard('Stock', data.stock.toString()),
+                  _buildInfoCard('Rating', data.rating.toString()),
+                  _buildInfoCard('Discount', '${data.discountPercentage}%'),
+                  _buildInfoCard('Tags', data.tags.join(', ')),
+                  _buildInfoCard('Brand', data.brand),
+                  _buildInfoCard('SKU', data.sku),
+                  _buildInfoCard(
+                    'Dimensions',
+                    '${data.dimensions.width} x ${data.dimensions.height} x ${data.dimensions.depth} cm',
+                  ),
+                  _buildInfoCard('Warranty', data.warrantyInformation),
+                  _buildInfoCard('Shipping', data.shippingInformation),
+                  _buildInfoCard('Return Policy', data.returnPolicy),
+                  _buildInfoCard('Min Order Quantity', data.minimumOrderQuantity.toString()),
+                ],
+              ),
             );
           },
-          error: (err, stack) => Center(child: Text('$err')),
-          loading: () => Center(child: CircularProgressIndicator()),
+          error: (err, stack) => Center(child: Text('Error: $err')),
+          loading: () => const Center(child: CircularProgressIndicator()),
         ),
       ),
     );
   }
 
-  // Generalized Card Builder for text content
-  Card _buildInfoCard(String title, String content) {
+  // Info Card
+  Card _buildInfoCard(String label, String value) {
     return Card(
-      elevation: 5,
-      margin: EdgeInsets.only(bottom: 16),
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            SizedBox(height: 8),
-            Text(content, style: TextStyle(fontSize: 16)),
+            Expanded(
+              flex: 2,
+              child: Text(
+                label,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              flex: 3,
+              child: Text(
+                value,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  // Generalized Image Card Builder
-  Card _buildImageCard(String title, String imageUrl) {
+  // Image Card with loading indicator
+  Card _buildImageCard(String label, String imageUrl) {
     return Card(
-      elevation: 5,
-      margin: EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            SizedBox(height: 8),
-            Image.network(imageUrl, fit: BoxFit.cover),
-          ],
-        ),
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return SizedBox(
+                  height: 200,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                          (loadingProgress.expectedTotalBytes ?? 1)
+                          : null,
+                    ),
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text('Failed to load image', style: TextStyle(color: Colors.red)),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

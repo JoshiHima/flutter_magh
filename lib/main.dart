@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:magh/routes/app_routes.dart';
@@ -8,8 +9,10 @@ import 'package:magh/routes/app_routes.dart';
 
 
 
-void main (){
 
+
+
+void main () {
 
 
 runApp(ProviderScope(child: Home()));

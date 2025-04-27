@@ -52,22 +52,22 @@ class TodoList extends ConsumerWidget {
       body: todoState.when(
           skipLoadingOnReload: true,
           data: (data){
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(child: Row(
-              children: [
-                Text(data),
-                if(todoState.isReloading) Text('Loading.......')
-              ],
-            )),
-            ElevatedButton(onPressed: (){
-              ref.read(todoControllerProvider.notifier).changeData();
-            }, child: Text('Change data'))
-          ],
+        return ListView.separated(itemBuilder: (context, index){
+          final todo = data[index];
+          return ListTile(
+            title: Text(todo.todo_task),
+            trailing: IconButton(onPressed: (){
+              ref.read(todoControllerProvider.notifier).removeTodo(todo.id);
+            }, icon: Icon(Icons.delete)),
+          );
+        },
+            separatorBuilder: (context, index){
+                return Divider();
+            },
+            itemCount: data.length
         );
       },
-          error: (err, st) => Text('$err }'),
+          error: (err, st) => Text('$err '),
           loading: () => Center(child: CircularProgressIndicator())),
     );
   }

@@ -1,8 +1,17 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:magh/core/constants/apis.dart';
+import 'package:magh/features/shared/client_provider.dart';
 import 'package:magh/features/todos/domain/todo.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+
+part 'todos_repository.g.dart';
+
+
+
 
 class TodosRepository{
 
@@ -46,18 +55,21 @@ class TodosRepository{
     }
   }
 
-  Future<void> removeTodos({required String id}) async{
+  Future<void> removeTodos({required String id}) async {
+    try {
+      final response = await client.delete(
+          '$todosApi/$id'); // we dont need data because khalli remove maatra garne ho, edit or create agrne haina
 
-    try{
-      final response = await client.delete('$todosApi/$id'); // we dont need data because khalli remove maatra garne ho, edit or create agrne haina
-
-    }catch(err){
+    } catch (err) {
       throw 'Something went wrong';
     }
-
-
   }
 
+}
 
+@riverpod
+TodosRepository todoRepository (Ref ref) {
+
+  return TodosRepository(ref.watch(clientProvider));
 
 }

@@ -1,28 +1,40 @@
+import 'package:magh/features/todos/data/todos_repository.dart';
+import 'package:magh/features/todos/domain/todo.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'todo_controller.g.dart';
 
+
 @riverpod
 class TodoController extends _$TodoController {
+
   @override
-  FutureOr<String> build() async {
-
-    return getData();
-
+  FutureOr<List<Todo>> build() async {
+    return ref.read(todoRepositoryProvider).getTodos();
   }
 
-  Future<String> getData() async{
 
-    // state upto 3 seconds is async loading and after 3 secoinds the state is asunc data
-    await Future.delayed(Duration(seconds: 3));
-    return 'data response';
-  }
-
-  Future<void> changeData() async{
+  Future<void> removeTodo(String id) async {
     state = AsyncLoading();
-    await Future.delayed(Duration(seconds: 4));
-    state = AsyncData('change data success');
+
+    try{
+
+      final response = await ref.read(todoRepositoryProvider).removeTodos(id: id);
+      ref.invalidateSelf(); // purano state is destroyed and naya state is build
+
+      await future; // naya state aaunjel samma parkhe vaneko
+
+    }catch(err, stack){
+
+      state = AsyncError(err, stack);
+
+
+
+    }
   }
+
+
+
 
 
 }

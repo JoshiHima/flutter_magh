@@ -5,14 +5,13 @@ import 'package:magh/routes/app_routes.dart';
 
 
 
+
 /// provider , notifier provider, future provider, async notifier provider, stream provider
 
 
 
 
-
-
-void main () {
+void main () async {
 
 
 runApp(ProviderScope(child: Home()));

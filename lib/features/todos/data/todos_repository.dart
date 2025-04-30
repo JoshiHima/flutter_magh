@@ -34,16 +34,17 @@ class TodosRepository{
 
   }
 
-  Future<void> addTodos({required Map<String, dynamic> todo_data}) async{
-
+  Future<Todo> addTodos({required Map<String, dynamic> todo_data}) async{
     try{
-      final response = await client.post(todosApi, data: todo_data); // post method to add data
-    }catch(err){
-      throw 'Something went wrong';
+      final response =  await client.post(todosApi, data: todo_data);
+      return Todo.fromJson(response.data);
+    }catch (err){
+      throw 'something went wrong';
     }
 
 
   }
+
 
   Future<void> updateTodos({required String id, required Map<String, dynamic> todoData}) async{
 

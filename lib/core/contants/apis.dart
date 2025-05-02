@@ -1,4 +1,5 @@
 
 
-const baseUrl = 'https://www.themealdb.com/api.php';
-const categoriesApi = '/categories';
+const baseUrl = 'https://www.themealdb.com/api/json/v1/1';
+const categoriesApi = '/categories.php';
+const filterApi = '/filter.php';
